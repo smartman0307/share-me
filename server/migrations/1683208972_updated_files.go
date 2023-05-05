@@ -22,6 +22,7 @@ func init() {
 			if f.Name == "file" {
 				f.Options = &schema.FileOptions{
 					MaxSelect: 1,
+					MaxSize:   5242880,
 					MimeTypes: []string{
 						"image/jpeg",
 						"image/png",
