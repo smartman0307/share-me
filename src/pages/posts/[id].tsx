@@ -24,7 +24,6 @@ import {
   Switch,
   Text,
   TextInput,
-  useMantineTheme,
 } from "@mantine/core";
 import { IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { useDebouncedValue } from "@mantine/hooks";
@@ -56,7 +55,6 @@ export default function Post(props: PostProps) {
   const { id } = router.query;
   const pb = usePocketBase();
   const { user } = useAuth();
-  const theme = useMantineTheme();
 
   const [post, setPost] = useState<Post | null>();
   const [userIsAuthor, setUserIsAuthor] = useState(props.userIsAuthor);
@@ -67,7 +65,6 @@ export default function Post(props: PostProps) {
 
   const [blurred, setBlurred] = useState<boolean[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [uploads, setUploads] = useState([]);
 
   const [debouncedTitle] = useDebouncedValue(title, 200, { leading: true });
 
@@ -104,9 +101,8 @@ export default function Post(props: PostProps) {
 
   const uploadFiles = async (f: FileWithPath[]) => {
     setUploading(true);
-    const records: File[] = [];
 
-    for (const file of f) {
+    const promises = f.map(async (file) => {
       try {
         const createdRecord = await uploadFile(pb, {
           file: file,
@@ -114,7 +110,7 @@ export default function Post(props: PostProps) {
           author: user?.id!,
           description: "",
         });
-        records.push(createdRecord);
+        return createdRecord;
       } catch (ex) {
         console.error(ex);
         notifications.show({
@@ -124,7 +120,11 @@ export default function Post(props: PostProps) {
           icon: <IconAlertCircle />,
         });
       }
-    }
+    });
+
+    const records = (await Promise.all(promises)).filter(
+      (r) => r !== undefined
+    ) as File[];
 
     if (!records) {
       setUploading(false);
