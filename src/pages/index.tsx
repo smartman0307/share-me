@@ -18,7 +18,6 @@ import {
   Image,
   ScrollArea,
   Text,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { IMAGE_MIME_TYPE } from "@mantine/dropzone";
@@ -72,25 +71,11 @@ export default function Home({ signUpEnabled }: HomeProps) {
   return (
     <>
       <Head />
-
       <Layout
         signUpEnabled={signUpEnabled}
         onFiles={(files) => user && createPost(files)}
       >
         <Container>
-          <Box p="lg" mb="md">
-            <form action="search" method="get">
-              <TextInput
-                id="query"
-                name="query"
-                placeholder="Search"
-                size="lg"
-                radius="xl"
-                variant="filled"
-              />
-            </form>
-          </Box>
-
           <Flex sx={{ justifyContent: "space-between" }}>
             <Title order={2}>Latest Posts</Title>
             <Anchor component={Link} href="/posts">
@@ -103,8 +88,6 @@ export default function Home({ signUpEnabled }: HomeProps) {
                 <Card
                   key={post.id}
                   p={0}
-                  component={Link}
-                  href={`/posts/${post.id}`}
                   sx={(theme) => ({
                     ":hover": { background: theme.colors.dark[8] },
                     display: "flex",
@@ -127,6 +110,8 @@ export default function Home({ signUpEnabled }: HomeProps) {
                       display: "flex",
                       "&[data-last]": { marginBottom: 0 },
                     }}
+                    component={Link}
+                    href={`/posts/${post.id}`}
                   >
                     {Array.isArray(post.expand.files) && (
                       <Flex
@@ -184,7 +169,7 @@ export default function Home({ signUpEnabled }: HomeProps) {
                           >
                             <Center h="100%" w="100%">
                               <Box>
-                                <Text size="xl">
+                                <Text size="xl" color="white">
                                   {post.expand.files.length - 1} +
                                 </Text>
                               </Box>
